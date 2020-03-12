@@ -1,0 +1,7 @@
+node_modules
+.env
+
+# Ignore movieServices
+
+./movieServices/node_modules
+./movieServices/env
