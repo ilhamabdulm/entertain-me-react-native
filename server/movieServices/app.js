@@ -1,5 +1,5 @@
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-  require()
+  require('dotenv').config()
 }
 
 const express = require('express')
@@ -18,5 +18,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(mongoConnect)
 app.use('/', routes)
 app.use(errorHandler)
+
+// app.listen(3001, () => {
+//   console.log('App listening on pooort 3001')
+// })
 
 module.exports = app

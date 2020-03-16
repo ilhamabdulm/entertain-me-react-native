@@ -8,7 +8,7 @@ class MovieControllers {
       if (movies) {
         res.status(200).json(JSON.parse(movies))
       } else {
-        const { data } = await axios.get('http://localhost:4000')
+        const { data } = await axios.get('http://localhost:3001')
         redis.set('movies', JSON.stringify(data))
         res.status(200).json(data)
       }

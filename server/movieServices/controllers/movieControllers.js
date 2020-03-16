@@ -54,6 +54,7 @@ class MovieControllers {
       popularity: req.body.popularity,
       tags: req.body.tags
     }
+    console.log(data)
     Movie.updateById(id, data)
       .then(response => {
         res.status(200).json(response)
