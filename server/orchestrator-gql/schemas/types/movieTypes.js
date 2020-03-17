@@ -5,7 +5,8 @@ module.exports = gql`
     _id: ID
     title: String
     overview: String
-    popularity: Int
+    poster_path: String
+    popularity: Float
     tags: [String]
   }
 
@@ -17,6 +18,7 @@ module.exports = gql`
     addMovie(
       title: String!
       overview: String!
+      poster_path: String!
       popularity: Int!
       tags: [String]!
     ): Movie
@@ -25,6 +27,7 @@ module.exports = gql`
       id: ID!
       title: String!
       overview: String!
+      poster_path: String!
       popularity: Int!
       tags: [String]!
     ): Movie

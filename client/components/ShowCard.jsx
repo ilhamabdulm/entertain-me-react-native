@@ -28,7 +28,6 @@ function ShowCard(props) {
   }
 
   const removeMovie = () => {
-    console.log('HEY, MASUK BUAT HAPUS')
     deleteMovie({
       variables: { id: props.item._id },
       update: (cache, { data }) => {
@@ -49,6 +48,15 @@ function ShowCard(props) {
       </View>
       <View style={styles.innerContainer}>
         <Text style={styles.title}>{props.item.title}</Text>
+        <View style={{ flexDirection: 'row' }}>
+          {props.item.tags.map((tag, i) =>
+            i !== props.item.tags.length - 1 ? (
+              <Text>{tag} | </Text>
+            ) : (
+              <Text>{tag}</Text>
+            )
+          )}
+        </View>
         <Text style={styles.overview}>{props.item.overview}</Text>
         <Text style={styles.rating}>Rating: {props.item.popularity}</Text>
         <View style={styles.btnContainer}>

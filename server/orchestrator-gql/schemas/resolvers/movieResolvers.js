@@ -12,6 +12,7 @@ module.exports = {
           return [movie.data]
         } else {
           const { data } = await axios.get('http://localhost:3000')
+          console.log(data)
           redis.set('movies', JSON.stringify(data))
           return data
         }
@@ -23,7 +24,7 @@ module.exports = {
   Mutation: {
     addMovie: async (
       parent,
-      { title, overview, popularity, tags },
+      { title, overview, popularity, tags, poster_path },
       context,
       info
     ) => {
@@ -31,6 +32,7 @@ module.exports = {
         const movieData = {
           title,
           overview,
+          poster_path,
           popularity,
           tags
         }
@@ -50,11 +52,12 @@ module.exports = {
         console.log(err)
       }
     },
-    editMovie: async (parent, { id, title, overview, popularity, tags }) => {
+    editMovie: async (parent, { id, title, overview, poster_path , popularity, tags }) => {
       try {
         const movieData = {
           title,
           overview,
+          poster_path,
           popularity,
           tags
         }
