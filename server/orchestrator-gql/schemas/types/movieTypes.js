@@ -19,7 +19,7 @@ module.exports = gql`
       title: String!
       overview: String!
       poster_path: String!
-      popularity: Int!
+      popularity: Float!
       tags: [String]!
     ): Movie
     deleteMovie(id: ID): Movie
@@ -28,7 +28,7 @@ module.exports = gql`
       title: String!
       overview: String!
       poster_path: String!
-      popularity: Int!
+      popularity: Float!
       tags: [String]!
     ): Movie
   }

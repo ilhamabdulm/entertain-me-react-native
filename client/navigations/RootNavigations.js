@@ -4,9 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 
 import AddForm from '../screens/AddForm'
-import Movies from '../screens/Movies'
-import Series from '../screens/Series'
-import DetailNavigation from '../navigations/DetailNavigation'
+import MovieNavigation from './MovieNavigation'
+import SeriesNavigation from './SeriesNavigation'
 
 const Stack = new createStackNavigator()
 const Tab = new createBottomTabNavigator()
@@ -33,10 +32,9 @@ function RootNavigation() {
         inactiveTintColor: 'gray'
       }}
     >
-      <Tab.Screen name="Detail" component={DetailNavigation} />
-      <Tab.Screen name="Movies" component={Movies} />
+      <Tab.Screen name="Movies" component={MovieNavigation} />
       <Tab.Screen name="Add New" component={AddForm} />
-      <Tab.Screen name="Series" component={Series} />
+      <Tab.Screen name="Series" component={SeriesNavigation} />
     </Tab.Navigator>
   )
 }

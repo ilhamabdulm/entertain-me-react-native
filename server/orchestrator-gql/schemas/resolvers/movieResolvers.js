@@ -5,12 +5,12 @@ module.exports = {
   Query: {
     movies: async (parent, { id }, context, info) => {
       try {
-        const movies = await redis.get('movies')
-        if (movies) return JSON.parse(movies)
         if (id) {
           const movie = await axios.get(`http://localhost:3000/${id}`)
           return [movie.data]
         } else {
+          const movies = await redis.get('movies')
+          if (movies) return JSON.parse(movies)
           const { data } = await axios.get('http://localhost:3000')
           console.log(data)
           redis.set('movies', JSON.stringify(data))
@@ -52,7 +52,10 @@ module.exports = {
         console.log(err)
       }
     },
-    editMovie: async (parent, { id, title, overview, poster_path , popularity, tags }) => {
+    editMovie: async (
+      parent,
+      { id, title, overview, poster_path, popularity, tags }
+    ) => {
       try {
         const movieData = {
           title,
@@ -61,11 +64,12 @@ module.exports = {
           popularity,
           tags
         }
+        console.log(movieData)
         const { data } = await axios.put(
           `http://localhost:3000/${id}`,
           movieData
         )
-        console.log(data)
+        redis.del('movies')
         return data.value
       } catch (err) {
         console.log(err)

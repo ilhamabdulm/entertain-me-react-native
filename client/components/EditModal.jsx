@@ -1,65 +1,84 @@
 import React, { useState } from 'react'
 import {
-  View,
   Text,
+  View,
+  TouchableOpacity,
+  Modal,
   TextInput,
   StyleSheet,
-  TouchableOpacity,
-  Alert,
   Picker,
-  KeyboardAvoidingView
+  Alert
 } from 'react-native'
 import { useMutation } from '@apollo/react-hooks'
+import { useNavigation } from '@react-navigation/native'
 
-import { ADD_MOVIE, GET_MOVIES, ADD_SERIES, GET_SERIES } from '../graphql/index'
+import { EDIT_MOVIE, GET_MOVIES, EDIT_SERIES, GET_SERIES } from '../graphql'
 
-function AddForm() {
-  const [title, setTitle] = useState('')
-  const [overview, setOverview] = useState('')
-  const [popularity, setPopularity] = useState(0)
-  const [poster_path, setPoster] = useState('')
+function EditModal(props) {
+  const [title, setTitle] = useState(props.itemData.title)
+  const [overview, setOverview] = useState(props.itemData.overview)
+  const [popularity, setPopularity] = useState(props.itemData.popularity)
+  const [poster_path, setPoster] = useState(props.itemData.poster_path)
   const [type, setType] = useState('Movie')
-  const [tags, setTags] = useState('')
+  const [tags, setTags] = useState(props.itemData.tags)
+  console.log(tags)
 
-  const [addMovie] = useMutation(ADD_MOVIE, {
+  const [editMovie] = useMutation(EDIT_MOVIE, {
     refetchQueries: [{ query: GET_MOVIES }]
   })
-  const [addSeries] = useMutation(ADD_SERIES, {
+  const [editSeries] = useMutation(EDIT_SERIES, {
     refetchQueries: [{ query: GET_SERIES }]
   })
+  const navigation = useNavigation()
+  const { visible, setVisible, itemData } = props
 
-  const confirmInput = () => {
-    console.log(type)
+  const handleSubmit = () => {
     if (type === 'Movie') {
-      addNewMovie()
+      handleEditMovie()
     } else {
-      addNewSeries()
+      handleEditSeries()
     }
   }
 
-  const addNewMovie = () => {
-    const newTags = tags.split(',')
-    console.log(newTags)
-    addMovie({
-      variables: { title, overview, popularity, poster_path, newTags: newTags },
+  const handleEditMovie = () => {
+    const newTags = Array.isArray(tags) ? tags : tags.split(',')
+    editMovie({
+      variables: {
+        id: itemData._id,
+        title,
+        overview,
+        popularity,
+        poster_path,
+        newTags: newTags
+      },
       update: (cache, { data }) => {
-        Alert.alert('New movie has been added')
+        Alert.alert('Data edited')
+        navigation.navigate(`${type}s`)
       }
     })
   }
 
-  const addNewSeries = () => {
-    const newTags = tags.split(',')
-    console.log(newTags)
-    addSeries({
-      variables: { title, overview, popularity, poster_path, newTags: newTags },
+  const handleEditSeries = () => {
+    const newTags = Array.isArray(tags) ? tags : tags.split(',')
+    editSeries({
+      variables: {
+        id: itemData._id,
+        title,
+        overview,
+        popularity,
+        poster_path,
+        newTags: newTags
+      },
       update: (cache, { data }) => {
-        Alert.alert('New TV Series has been added')
+        Alert.alert('Data edited')
+        console.log(data)
+        navigation.navigate(`Series`)
       }
     })
   }
 
   const handlePopularity = text => {
+    console.log(text)
     if (text > 10) {
       alert('Rating only allowed 0-10')
     } else {
@@ -68,40 +87,44 @@ function AddForm() {
   }
 
   return (
-    <KeyboardAvoidingView>
+    <Modal animationType="slide" transparent={false} visible={visible}>
       <View style={styles.inputContainer}>
-        <Text style={styles.title}>Add New</Text>
+        <Text style={styles.title}>Edit Item</Text>
         <Text>Title</Text>
         <TextInput
           style={styles.textInput}
           placeholder="Title"
           onChangeText={text => setTitle(text)}
+          defaultValue={itemData.title}
         />
         <Text>Overview</Text>
         <TextInput
           style={styles.textInput}
           placeholder="Overview"
-          selectTextOnFocus={true}
           onChangeText={text => setOverview(text)}
+          defaultValue={itemData.overview}
         />
         <Text>Rating</Text>
         <TextInput
           style={styles.textInput}
-          placeholder="Rating (0-10)"
+          placeholder="Rating"
           keyboardType="numeric"
           onChangeText={text => handlePopularity(text)}
+          defaultValue={String(itemData.popularity)}
         />
         <Text>Poster Path</Text>
         <TextInput
           style={styles.textInput}
           placeholder="Poster Path"
           onChangeText={text => setPoster(text)}
+          defaultValue={itemData.poster_path}
         />
         <Text>Tags</Text>
         <TextInput
           style={styles.textInput}
           placeholder="Separated by comma (ex: movie,action,adventure)"
           onChangeText={text => setTags(text)}
+          defaultValue={itemData.tags.join(',')}
         />
         <Text>Type</Text>
         <Picker
@@ -111,22 +134,32 @@ function AddForm() {
             width: '100%',
             marginBottom: 10
           }}
-          onValueChange={(itemValue, itemIndes) => setType(itemValue)}
+          onValueChange={(itemValue, itemIndex) => setType(itemValue)}
         >
           <Picker.Item label="Movie" value="Movie" />
           <Picker.Item label="TV Series" value="Series" />
         </Picker>
-        <TouchableOpacity onPress={confirmInput}>
+        <TouchableOpacity onPress={handleSubmit}>
           <Text style={styles.inputButton}>Submit</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            marginTop: 10
+          }}
+          onPress={() => setVisible(false)}
+        >
+          <Text style={[styles.inputButton, { backgroundColor: 'red' }]}>
+            Close
+          </Text>
+        </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </Modal>
   )
 }
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginTop: '30%',
+    marginTop: '25%',
     padding: 15
   },
   title: {
@@ -152,4 +185,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default AddForm
+export default EditModal

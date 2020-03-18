@@ -5,20 +5,31 @@ module.exports = gql`
     _id: ID
     title: String
     overview: String
-    popularity: Int
+    popularity: Float
     tags: [String]
+    poster_path: String
   }
 
   extend type Query {
-    series: [TvSeries]
+    series(id: ID): [TvSeries]
   }
 
   extend type Mutation {
     addSeries(
       title: String!
       overview: String!
-      popularity: Int!
+      popularity: Float!
       tags: [String]!
-    ): Movie
+      poster_path: String!
+    ): TvSeries
+    deleteSeries(id: ID): TvSeries
+    editSeries(
+      id: ID!
+      title: String!
+      overview: String!
+      poster_path: String!
+      popularity: Float!
+      tags: [String]!
+    ): TvSeries
   }
 `
